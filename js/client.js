@@ -270,8 +270,10 @@ var getBadges = function(t, card, detailed){
     t.get('board', 'shared', 'pappira.inactivityEnabled', false),
     t.get('board', 'shared', 'pappira.inactivityShowDays'),
     t.get('board', 'shared', 'pappira.inactivityCriticalDays'),
+    t.get('board', 'shared', 'pappira.bmgStatusEnabled'),
+    t.get('card', 'shared', 'pappira.bmgStatus')
   ])
-  .spread(function(idPrefix, idStartNumber, idSuffix, idEnabled, idRemove, cardId, validationBadge, inactivityEnabled, inactivityShowDays, inactivityCriticalDays){
+  .spread(function(idPrefix, idStartNumber, idSuffix, idEnabled, idRemove, cardId, validationBadge, inactivityEnabled, inactivityShowDays, inactivityCriticalDays, bmgStatusEnabled, cardBmgStatus){
     if(idEnabled){
       var idBadge = getIdBadge();
       idBadge.text = getIdBadgeText(idPrefix, idStartNumber, idSuffix, cardId, card);
@@ -304,6 +306,11 @@ var getBadges = function(t, card, detailed){
       if(snoozeBadge) {
         badges.push(snoozeBadge);
       }
+    }
+    if(bmgStatusEnabled || cardBmgStatus) {
+      badges.push({
+        dynamic: function(){return getLadStatusBadge(card.id, t, cardBmgStatus, detailed);}
+      });
     }
     return badges;
   });

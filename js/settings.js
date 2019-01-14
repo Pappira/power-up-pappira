@@ -29,6 +29,10 @@ var inactivityDisableButton = document.getElementById('inactivityDisable');
 var inactivityShowDays = document.getElementById('inactivityShowDays');
 var inactivityCriticalDays = document.getElementById('inactivityCriticalDays');
 
+var bmgStatusEnabled = document.getElementById('bmgStatusEnabled');
+var bmgStatusEnableButton = document.getElementById('bmgStatusEnable');
+var bmgStatusDisableButton = document.getElementById('bmgStatusDisable');
+
 t.render(function(){
   return Promise.all([
     t.get('board', 'shared', 'pappira.idPrefix'),
@@ -44,10 +48,11 @@ t.render(function(){
     t.get('board', 'shared', 'pappira.inactivityEnabled', false),
     t.get('board', 'shared', 'pappira.inactivityShowDays'),
     t.get('board', 'shared', 'pappira.inactivityCriticalDays'),
+    t.get('board', 'shared', 'pappira.bmgStatusEnabled'),
   ])
   .spread(function(savedPrefix, savedStartedNumber, savedSuffix, savedEnabled, 
                   savedValidationTitle, savedValidationDescription, savedValidationChecklist, savedValidationEnabled, savedValidationWorkOrder, savedValidationEmail,
-                  savedInactivityEnabled, savedInactivityShowDays, savedInactivityCriticalDays) {
+                  savedInactivityEnabled, savedInactivityShowDays, savedInactivityCriticalDays, savedBmgStatusEnabled) {
     if(savedPrefix){
       idPrefix.value = savedPrefix;
     }
@@ -97,6 +102,13 @@ t.render(function(){
     }
     if(savedInactivityCriticalDays){
       inactivityCriticalDays.value = savedInactivityCriticalDays;
+    }
+
+    bmgStatusEnabled.value = savedBmgStatusEnabled;
+    if(savedBmgStatusEnabled){
+      bmgStatusEnableButton.parentNode.removeChild(bmgStatusEnableButton);
+    } else {
+      bmgStatusDisableButton.parentNode.removeChild(bmgStatusDisableButton);
     }
   })
   .then(function(){
@@ -195,6 +207,19 @@ inactivityEnableButton.addEventListener('click', function(){
 });
 inactivityDisableButton.addEventListener('click', function(){
   return t.set('board', 'shared', 'pappira.inactivityEnabled', false)
+  .then(function(){
+    t.closePopup();
+  });
+});
+
+bmgStatusEnableButton.addEventListener('click', function(){
+  return t.set('board', 'shared', 'pappira.bmgStatusEnabled', true)
+  .then(function(){
+    t.closePopup();
+  });
+});
+bmgStatusDisableButton.addEventListener('click', function(){
+  return t.set('board', 'shared', 'pappira.bmgStatusEnabled', false)
   .then(function(){
     t.closePopup();
   });
