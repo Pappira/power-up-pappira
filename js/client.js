@@ -69,7 +69,7 @@ var validateCard = function(t, card){
     if(!validationEnabled){
       return false;
     }
-    if(validationWorkOrder) {
+    if(validationWorkOrder && pappiraCardId) {
       var foundWO = false;
       var cardIdNumber = pappiraCardId.replace(new RegExp(idPrefix),'').replace(new RegExp(idSuffix+"$"),'');
       var patt = new RegExp("("+pappiraCardId+"|"+cardIdNumber+"){1}(,|\\.)?(\\d){0,2}(\\.pdf){1}", "i");
