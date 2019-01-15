@@ -274,12 +274,16 @@ var getBadges = function(t, card, detailed){
     t.get('card', 'shared', 'pappira.bmgStatus')
   ])
   .spread(function(idPrefix, idStartNumber, idSuffix, idEnabled, idRemove, cardId, validationBadge, inactivityEnabled, inactivityShowDays, inactivityCriticalDays, bmgStatusEnabled, cardBmgStatus){
-    if(idEnabled){
+    if (idEnabled || cardId) {
       var idBadge = getIdBadge();
-      idBadge.text = getIdBadgeText(idPrefix, idStartNumber, idSuffix, cardId, card);
-      if(idBadge.text !== cardId) {
-        setPappiraCardId(t, idBadge.text);
-        setTrelloCardName(t, card, idBadge.text + " - " + card.name);
+      if (idEnabled) {
+        idBadge.text = getIdBadgeText(idPrefix, idStartNumber, idSuffix, cardId, card);
+        if (idBadge.text !== cardId) {
+          setPappiraCardId(t, idBadge.text);
+          setTrelloCardName(t, card, idBadge.text + " - " + card.name);
+        }
+      } else {
+        idBadge.text = cardId;
       }
       badges.push(idBadge);
     } 
