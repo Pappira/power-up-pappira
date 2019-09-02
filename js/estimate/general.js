@@ -123,14 +123,10 @@ var updateCard = function(estimate) {
 		.then(function(){
 			var text = "";
 			Promise.all([
-				t.get('board', 'shared', 'pappira.idPrefix'),
-				t.get('board', 'shared', 'pappira.idStartNumber', 0),
-				t.get('board', 'shared', 'pappira.idSuffix'),
 				t.get('card', 'shared', 'pappira.id')
 			])
-			.spread(function(idPrefix, idStartNumber, idSuffix, id){
-				text = getIdBadgeText(idPrefix, idStartNumber, idSuffix, id, card);
-				updateTrelloCard(t, {id: card.id, desc: createTextForCard(estimate), name: text + " - " + createTrelloCardName(estimate)})
+			.spread(function(id){
+				updateTrelloCard(t, {id: card.id, desc: createTextForCard(estimate), name: id + " - " + createTrelloCardName(estimate)})
 				.then(function(){
 					return getCheckLists(t,card.id)
 					.then(function(currentCheckListsOnCard){
