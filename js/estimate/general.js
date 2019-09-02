@@ -757,7 +757,15 @@ var createTrelloCardName = function(estimate){
 	if (estimate.SelectedOption){
 		quantity = estimate.prices[estimate.SelectedOption].quantity;
 	}
-	return quantity + " " + estimate.name + " - " + contactAndBusinessInfo.filter(Boolean).join(' - ');
+	var text = "";
+	return t.get('board', 'shared', 'pappira.idPrefix'),
+	t.get('board', 'shared', 'pappira.idStartNumber', 0),
+	t.get('board', 'shared', 'pappira.idSuffix'),
+	t.get('card', 'shared', 'pappira.id')
+	.spread(function(idPrefix, idStartNumber, idSuffix, id){
+		text = getIdBadgeText(idPrefix, idStartNumber, idSuffix, cardId, card);
+		return text + " - " + quantity + " " + estimate.name + " - " + contactAndBusinessInfo.filter(Boolean).join(' - ');
+	});
 }
 
 
