@@ -121,42 +121,51 @@ var updateCard = function(estimate) {
 	.then(function(card) {
 	  t.set('card', 'shared', cardInfoKey, estimateToSave)
 		.then(function(){
-			updateTrelloCard(t, {id: card.id, desc: createTextForCard(estimate), name: createTrelloCardName(estimate)})
-			.then(function(){
-				//var checkListToCard = [];
-				return getCheckLists(t,card.id)
-				.then(function(currentCheckListsOnCard){
-					var currentCheckListsToDelete = [];
-					for (var i = 0; i < currentCheckListsOnCard.length;i++){
-						currentCheckListsToDelete.push(removeCheckLists(t,currentCheckListsOnCard[i].id));
-					}
-					return TrelloPowerUp.Promise.all(currentCheckListsToDelete)
-					.then(function(){
-						for (var i = 0; i < checkLists.length;i++){
-							var currentCheckList = createCheckListObject(checkLists[i].name, card.id);
-							var checkListToCard = addCheckListToCard(t, currentCheckList,checkLists[i].checkItems)
-							.then(function(checkList){
-								for (var i = 0; i < checkLists.length;i++){
-									if(checkLists[i].name == checkList.name){
-										for (var j = 0; j < checkLists[i].checkItems.length;j++){ 
-											trelloCheckListItems.push(addCheckListItemToCheckList(t,checkLists[i].checkItems[j],checkList.id));
-										}
-										break;
-									}
-								}
-							})
-							trelloCheckList.push(checkListToCard);
+			var text = "";
+			t.get('board', 'shared', 'pappira.idPrefix'),
+			t.get('board', 'shared', 'pappira.idStartNumber', 0),
+			t.get('board', 'shared', 'pappira.idSuffix'),
+			t.get('card', 'shared', 'pappira.id')
+			.spread(function(idPrefix, idStartNumber, idSuffix, id){
+				text = getIdBadgeText(idPrefix, idStartNumber, idSuffix, cardId, card);
+				updateTrelloCard(t, {id: card.id, desc: createTextForCard(estimate), name: text + " - " + createTrelloCardName(estimate)})
+				.then(function(){
+					//var checkListToCard = [];
+					return getCheckLists(t,card.id)
+					.then(function(currentCheckListsOnCard){
+						var currentCheckListsToDelete = [];
+						for (var i = 0; i < currentCheckListsOnCard.length;i++){
+							currentCheckListsToDelete.push(removeCheckLists(t,currentCheckListsOnCard[i].id));
 						}
-						return TrelloPowerUp.Promise.all(trelloCheckList)
+						return TrelloPowerUp.Promise.all(currentCheckListsToDelete)
 						.then(function(){
-							return TrelloPowerUp.Promise.all(trelloCheckListItems)
+							for (var i = 0; i < checkLists.length;i++){
+								var currentCheckList = createCheckListObject(checkLists[i].name, card.id);
+								var checkListToCard = addCheckListToCard(t, currentCheckList,checkLists[i].checkItems)
+								.then(function(checkList){
+									for (var i = 0; i < checkLists.length;i++){
+										if(checkLists[i].name == checkList.name){
+											for (var j = 0; j < checkLists[i].checkItems.length;j++){ 
+												trelloCheckListItems.push(addCheckListItemToCheckList(t,checkLists[i].checkItems[j],checkList.id));
+											}
+											break;
+										}
+									}
+								})
+								trelloCheckList.push(checkListToCard);
+							}
+							return TrelloPowerUp.Promise.all(trelloCheckList)
 							.then(function(){
-								t.closeModal();
+								return TrelloPowerUp.Promise.all(trelloCheckListItems)
+								.then(function(){
+									t.closeModal();
+								});
 							});
 						});
 					});
 				});
 			});
+			
 		});
 	});
 };
@@ -757,15 +766,7 @@ var createTrelloCardName = function(estimate){
 	if (estimate.SelectedOption){
 		quantity = estimate.prices[estimate.SelectedOption].quantity;
 	}
-	var text = "";
-	return t.get('board', 'shared', 'pappira.idPrefix'),
-	t.get('board', 'shared', 'pappira.idStartNumber', 0),
-	t.get('board', 'shared', 'pappira.idSuffix'),
-	t.get('card', 'shared', 'pappira.id')
-	.spread(function(idPrefix, idStartNumber, idSuffix, id){
-		text = getIdBadgeText(idPrefix, idStartNumber, idSuffix, cardId, card);
-		return text + " - " + quantity + " " + estimate.name + " - " + contactAndBusinessInfo.filter(Boolean).join(' - ');
-	});
+	return quantity + " " + estimate.name + " - " + contactAndBusinessInfo.filter(Boolean).join(' - ');
 }
 
 
