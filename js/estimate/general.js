@@ -129,7 +129,7 @@ var updateCard = function(estimate) {
 				t.get('card', 'shared', 'pappira.id')
 			])
 			.spread(function(idPrefix, idStartNumber, idSuffix, id){
-				text = getIdBadgeText(idPrefix, idStartNumber, idSuffix, cardId, card);
+				text = getIdBadgeText(idPrefix, idStartNumber, idSuffix, id, card);
 				updateTrelloCard(t, {id: card.id, desc: createTextForCard(estimate), name: text + " - " + createTrelloCardName(estimate)})
 				.then(function(){
 					return getCheckLists(t,card.id)
