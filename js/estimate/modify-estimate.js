@@ -9,7 +9,7 @@ var quantityChip = [];
 var estimate = {};
 
 var cardInfoKey = 'pappira.cardInfo';
-var listId = '5a9ef0ce024c776a21220836';
+var listId = '5af49a20dea307f1e6dcd31b';
 
 t.render(function(){
 	return t.get('card', 'shared', cardInfoKey)
