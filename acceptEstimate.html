@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Precios</title>
+        <meta name = "viewport" content = "width = device-width, initial-scale = 1">      
+        <link rel="stylesheet" href="https://p.trellocdn.com/power-up.min.css">   
+        <link rel = "stylesheet"
+           href = "https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel = "stylesheet"
+           href = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+        <script type = "text/javascript"
+           src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>           
+        <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script> 
+        <script src="https://p.trellocdn.com/power-up.min.js"></script>
+        <script src="https://trello.com/1/client.js?key=338a0019b5eb47ced79413a71191f169"></script>
+  
+        <link rel="stylesheet" type="text/css" href="css/general.css">
+        <link rel="stylesheet" type="text/css" href="css/new-card2.css">
+        <script>
+           $(document).ready(function() {
+              $('select').material_select();
+           });
+        </script>
+    </head>
+<body>
+
+<div class="container">
+  
+  <div id="wizardContainer" class="stepwizard col-md-offset-3">
+  </div>
+  
+  <form role="form" action="" method="post" id='wizardForm'>
+  </form>
+  
+</div>
+
+<script src="./js/estimate/utils.js"></script>
+<script src="./js/estimate/trello-api.js"></script>
+<script src = "./js/estimate/AcceptEstimate.js"></script> 
+<script src = "./js/estimate/general.js"></script>  
+<script src = "./js/estimate/translatorToSaveJSON.js"></script> 
+<script src = "./js/estimate/work-type.js"></script> 
+<script language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.js"></script>
+</body>

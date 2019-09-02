@@ -4,6 +4,8 @@
 // we can access Bluebird Promises as follows
 var Promise = TrelloPowerUp.Promise;
 
+var cardInfoKey = 'pappira.cardInfo';
+
 var ID_ICON = './images/fingerprint.svg';
 var ERROR_ICON = './images/error.svg';
 var OK_ICON = './images/check.svg';
@@ -320,6 +322,65 @@ var getBadges = function(t, card, detailed){
   });
 };
 
+var getNewAutomaticEstimateModalCallback = function(){
+  return function(t){
+    return t.modal(
+      {
+        url: './automatic-select.html', // The URL to load for the iframe
+        accentColor: '#303F9F', // Optional color for the modal header 
+        height: 500, // Initial height for iframe; not used if fullscreen is true
+        fullscreen: true, // Whether the modal should stretch to take up the whole screen
+        callback: () => console.log('Goodbye.'), // optional function called if user closes modal (via `X` or escape)
+        title: 'Crear Orden automática', // Optional title for modal header
+      }
+    );
+  }
+}; 
+
+var getNewEstimateModalCallback = function(){
+  return function(t){
+    return t.modal(
+      {
+        url: './modify-estimate.html', // The URL to load for the iframe
+        args: { update: 'update' }, // Optional args to access later with t.arg('text') on './modal.html'
+        accentColor: '#303F9F', // Optional color for the modal header 
+        height: 500, // Initial height for iframe; not used if fullscreen is true
+        fullscreen: false, // Whether the modal should stretch to take up the whole screen
+        callback: () => console.log('Goodbye.'), // optional function called if user closes modal (via `X` or escape)
+        title: 'Modificar Datos', // Optional title for modal header
+      }
+    );
+  }
+}; 
+
+var getCustomerCallback = function(update){
+  return function(t){
+    return t.modal(
+      {
+        url: './customer.html', // The URL to load for the iframe
+        accentColor: '#303F9F', // Optional color for the modal header 
+        height: 740, // Initial height for iframe; not used if fullscreen is true
+        fullscreen: true, // Whether the modal should stretch to take up the whole screen
+        callback: () => console.log('Goodbye.'), // optional function called if user closes modal (via `X` or escape)
+        title: 'Cliente y comentarios', // Optional title for modal header
+      }
+    );
+  }
+}; 
+
+var getAcceptEstimate = function(){
+  return function(t){
+    return t.modal({
+      url: './acceptEstimate.html', // The URL to load for the iframe
+      accentColor: '#303F9F', // Optional color for the modal header 
+      height: 740, // Initial height for iframe; not used if fullscreen is true
+      fullscreen: false, // Whether the modal should stretch to take up the whole screen
+      callback: () => console.log('Goodbye.'), // optional function called if user closes modal (via `X` or escape)
+      title: 'Aceptar presupuesto', // Optional title for modal header
+    });
+  }
+}; 
+
 // We need to call initialize to get all of our capability handles set up and registered with Trello
 TrelloPowerUp.initialize({
   'card-badges': function(t, options){
@@ -328,11 +389,57 @@ TrelloPowerUp.initialize({
        return getBadges(t, card, false);
     });
   },
+  'board-buttons': function(t, options){
+    var buttons = [];
+    buttons.push(
+        {
+          text: 'Nuevo Presupuesto Automático',
+          callback: getNewAutomaticEstimateModalCallback()
+        }
+    );
+    return buttons;
+  },
   'card-detail-badges': function(t, options) {
     return t.card('all')
     .then(function (card) {
        return getBadges(t, card, true);
     });
+  },
+  'card-buttons': function(t, options) {
+    return t.get('card', 'shared', cardInfoKey).then(
+      function(estimate){
+        var acceptEstimte ={};
+        estimate = deTranslateEstimate(JSON.parse( LZString.decompress(estimate)));
+        if (estimate['prices']){
+          acceptEstimte = {
+            // usually you will provide a callback function to be run on button click
+            // we recommend that you use a popup on click generally
+            //icon: GRAY_ICON, // don't use a colored icon here
+            text: 'Aceptar',
+            callback: getAcceptEstimate()
+          }
+        }
+        return [{
+          // usually you will provide a callback function to be run on button click
+          // we recommend that you use a popup on click generally
+          //icon: GRAY_ICON, // don't use a colored icon here
+          text: 'Cliente',
+          callback: getCustomerCallback()
+        },{
+          // usually you will provide a callback function to be run on button click
+          // we recommend that you use a popup on click generally
+          //icon: GRAY_ICON, // don't use a colored icon here
+          text: 'Modificar',
+          callback: getNewEstimateModalCallback()
+        },{
+          // usually you will provide a callback function to be run on button click
+          // we recommend that you use a popup on click generally
+          //icon: GRAY_ICON, // don't use a colored icon here
+          text: 'Ver Presupuesto',
+          callback: getEstimateCallBack
+        },acceptEstimte];
+      }
+    );
   },
   'card-from-url': function (t, options) {
     // options.url has the url in question
