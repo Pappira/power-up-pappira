@@ -121,7 +121,7 @@ var extraPrices = [
   },
   {
       "workId":0,
-      "quantity":100,    
+      "quantity":1000,    
       "optionalFinishes":
         [
         ],

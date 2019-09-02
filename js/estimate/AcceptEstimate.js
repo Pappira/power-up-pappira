@@ -91,13 +91,15 @@ var nextAfterAcceptedEstimateSelect = function(){
     estimate["SelectedOption"] = 0;
   }
   if (estimate.optionalFinishesPrices && estimate.optionalFinishesPrices.length>0){
-      var possibilities = createPossibilities();
-      if (possibilities != null){
-        deleteWizard();
-        createWizard(possibilities);
-      }else{
-        updateEstimateAndTrelloCard();
-      }
+    var possibilities = createPossibilities();
+    if (possibilities != null){
+      deleteWizard();
+      createWizard(possibilities);
+    }else{
+      updateEstimateAndTrelloCard();
+    }
+  }else{
+    updateEstimateAndTrelloCard();
   }
 }
 
